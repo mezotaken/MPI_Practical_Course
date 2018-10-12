@@ -21,6 +21,7 @@ script:
   - cmake -D CMAKE_BUILD_TYPE=Release ..
   - make -j4
 
+  - mpirun -np 4 ./modules/task_1/nesterov_test_task/nesterov_test_task
   - mpirun -np 4 ./modules/test_task/test_task
   - mpirun -np 4 ./modules/task_1/Yakovlev_Pavel_mul_vect/Yakovlev_Pavel_mul_vect 100000
   - mpirun -np 4 ./modules/task_1/Perov_Dima_task1_SumElVect/Perov_Dima_task1_SumElVect 10000
