@@ -49,4 +49,4 @@ build_script:
   - cmd: mpiexec.exe -np 4 modules\task_1\Perov_Dima_task1_SumElVect\%configuration%\Perov_Dima_task1_SumElVect.exe 10000
   - cmd: mpiexec.exe -np 4 modules\task_1\vikhrev_array_sum\%configuration%\vikhrev_array_sum.exe 10 10
   - cmd: mpiexec.exe -np 4 modules\task_1\Yakovlev_Pavel_mul_vect\%configuration%\Yakovlev_Pavel_mul_vect.exe 100000
-  - cmd: mpiexec.exe -np 4 modules\task_1\Vdovin_Eugene_task1_NumWords\%configuration%\Vdovin_Eugene_task1_NumWords.exe 300000000
+  - cmd: mpiexec.exe -np 4 modules\task_1\Vdovin_Eugene_task1_NumWords\%configuration%\Vdovin_Eugene_task1_NumWords.exe 3000000
