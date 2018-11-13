@@ -26,15 +26,7 @@ int main(int argc, char *argv[])
 	int lenl = l.length();
 	int len = converter_in_number(size);
 	len = len * 3;
-	char* s = new char[len + 1];
-	int k = 0;
-	while (k < len - 2)
-	{
-		s[k] = 'a';
-		s[k + 1] = l[(int)(rand() % lenl)];
-		s[k + 2] = 'a';
-		k = k + 3;
-	}
+	char* s;
 
 	int ProcNum, ProcRank;
 	double stime = 0.0;
@@ -47,12 +39,21 @@ int main(int argc, char *argv[])
 	int residue = 0;
 
 	MPI_Init(&argc, &argv);
+	MPI_Status ss;
 	MPI_Comm_size(MPI_COMM_WORLD, &ProcNum);
 	MPI_Comm_rank(MPI_COMM_WORLD, &ProcRank);
 
 	if (ProcRank == 0)
 	{
-
+		s = new char[len + 1];
+		int k = 0;
+		while (k < len - 2)
+		{
+			s[k] = 'a';
+			s[k + 1] = l[(int)(rand() % lenl)];
+			s[k + 2] = 'a';
+			k = k + 3;
+		}
 		stime = MPI_Wtime();
 		for (int i = 0; i < len; i++)
 			if (s[i] == ' ')
@@ -63,11 +64,16 @@ int main(int argc, char *argv[])
 		cout << "Number words: " << nword << endl;
 		cout << "Time: " << etime - stime << " sec" << endl;
 		stime_ = MPI_Wtime();
+		for (int i = 1; i < ProcNum; i++)
+			MPI_Send(s + len / ProcNum * i, len / ProcNum, MPI_CHAR, i, 0, MPI_COMM_WORLD);
+	}
+	else
+	{
+		s = new char[len / ProcNum + 1];
+		MPI_Recv(s, len / ProcNum, MPI_CHAR, 0, 0, MPI_COMM_WORLD, &ss);
 	}
 
-	MPI_Bcast(s, len, MPI_CHAR, 0, MPI_COMM_WORLD);
-
-	for (int i = len / ProcNum * ProcRank; i < len / ProcNum + len / ProcNum * ProcRank; i++)
+	for (int i = 0; i < len / ProcNum; i++)
 		if (s[i] == ' ')
 			nword_++;
 
