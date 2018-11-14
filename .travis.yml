@@ -4,6 +4,11 @@ language:
 os:
   - linux
 
+cache:
+  directories:
+    - /home/travis/opencv_build/
+    # - /home/travis/cppcheck_build/
+
 compiler:
   - gcc
   - g++
@@ -12,24 +17,37 @@ compiler:
 before_install:
   - test -n $CC  && unset CC
   - test -n $CXX && unset CXX
+  - wget https://github.com/opencv/opencv/archive/3.4.3.tar.gz
+  - tar -xvzf 3.4.3.tar.gz
+  - export CURRENT_DIR_OCV=${PWD}
+  - mkdir -p /home/travis/opencv_build/
+  - cd /home/travis/opencv_build/
+  - cmake $CURRENT_DIR_OCV/opencv-3.4.3
+  - make -j4
+  - cd $CURRENT_DIR_OCV
 
 install:
   - sudo apt-get install libcr-dev mpich2 mpich2-doc
-  - wget "https://github.com/danmar/cppcheck/archive/1.85.tar.gz"
-  - tar -xzf 1.85.tar.gz
-  - cd cppcheck-1.85
-  - make -j4 SRCDIR=build CFGDIR=/usr/share/cppcheck/ &> log_make
-  - sudo make install CFGDIR=/usr/share/cppcheck/ &> log_make_install
-  - cd ..
-  - rm -rf cppcheck-1.85
+  # - wget "https://github.com/danmar/cppcheck/archive/1.85.tar.gz"
+  # - tar -xzf 1.85.tar.gz
+  # - export CURRENT_DIR_CPPCHECK=${PWD}
+  # - mkdir -p /home/travis/cppcheck_build/
+  # - cd /home/travis/cppcheck_build/
+  # - cmake $CURRENT_DIR_CPPCHECK/cppcheck-1.85
+  # - make -j4 SRCDIR=build CFGDIR=/usr/share/cppcheck/
+  # - sudo make install CFGDIR=/usr/share/cppcheck/
+  # - cd $CURRENT_DIR_CPPCHECK
+  # - rm -rf cppcheck-1.85
 
 script:
   - python scripts/lint.py
   - mkdir build
   - cd build
-  - cmake -D CMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
-  - cppcheck -j4 --project=compile_commands.json &> log_cppcheck
-  - python ../scripts/static_analysis.py log_cppcheck
+  - cmake -D CMAKE_BUILD_TYPE=Release \
+          -D OpenCV_DIR=/home/travis/opencv_build/ \
+          -D CMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+  # - cppcheck -j4 --project=compile_commands.json &> log_cppcheck
+  # - python ../scripts/static_analysis.py log_cppcheck
   - make -j4
 
   - mpirun -np 4 ./modules/test_task/test_task
@@ -45,3 +63,4 @@ script:
   # - mpirun -np 4 ./modules/task_1/ndanilov_rows_matrix_sum/ndanilov_rows_matrix_sum 10 10
   # - mpirun -np 4 ./modules/task_1/Yunin_Ivan_maximum_elem_vector/Yunin_Ivan_maximum_elem_vector 100
   # - mpirun -np 4 ./modules/task_2/Gaidaichuk_Yuri_task2_Bubble_sorting/Gaidaichuk_Yuri_task2_Bubble_sorting 9
+  - mpirun -np 4 ./modules/task_2/Perov_Dima_task2_ProducerConsumer/Perov_Dima_task2_ProducerConsumer 10 5 5 1 2
