@@ -74,8 +74,8 @@ int main(int argc, char* argv[]) {
     sqmatr = new double[mSize*(mSize + 1)];
     for (int i = 0; i < mSize; i++)
       for (int j = 0; j < mSize + 1; j++)
-        sqmatr[i*(mSize + 1) + j] = matr[i*(mSize + 1) + j] = 
-		(rand_r() % 20000) / 100.0 - 100.0;
+        sqmatr[i*(mSize + 1) + j] = matr[i*(mSize + 1) + j] =
+        (rand_r() % 20000) / 100.0 - 100.0;
 
     // If matrix is small enough, then print it
     if (mSize < 11) {
@@ -132,8 +132,8 @@ int main(int argc, char* argv[]) {
   }
 
   // Scatter required rows between processes
-  MPI_Scatterv(matr, counts, displs, MPI_DOUBLE, buf, 
-	  counts[procId], MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  MPI_Scatterv(matr, counts, displs, MPI_DOUBLE, buf,
+      counts[procId], MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
   // Aux data correction after sending
   for (int i = 0; i < nProc; i++) {
@@ -170,7 +170,7 @@ int main(int argc, char* argv[]) {
     partx[j] = buf[j*(mSize + 1) + mSize];
 
   // Gather parts of solution in 0 process
-  MPI_Gatherv(partx, counts[procId], MPI_DOUBLE, x, counts, 
+  MPI_Gatherv(partx, counts[procId], MPI_DOUBLE, x, counts,
                     displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
 
