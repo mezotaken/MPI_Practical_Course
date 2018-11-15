@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
 
   if (procId == 0) {
     x = new double[mSize];
-    srand((unsigned int)time(NULL));
+    unsigned int seed = srand((unsigned int)time(NULL));
 
     // Initializing matrixes
     matr = new double[mSize*(mSize + 1)];
@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < mSize; i++)
       for (int j = 0; j < mSize + 1; j++)
         sqmatr[i*(mSize + 1) + j] = matr[i*(mSize + 1) + j] =
-        (rand_r((unsigned int)time(NULL)) % 20000) / 100.0 - 100.0;
+        (rand_r(&seed) % 20000) / 100.0 - 100.0;
 
     // If matrix is small enough, then print it
     if (mSize < 11) {
