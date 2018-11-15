@@ -28,23 +28,23 @@ int main(int argc, char* argv[]) {
               // MPI initializing
   status = MPI_Init(&argc, &argv);
   if (status != MPI_SUCCESS) {
-	std::cout << "Error while MPI Initializing";  
-	return -1; 
+    std::cout << "Error while MPI Initializing";
+    return -1;
   }
   // Getting process ID
   status = MPI_Comm_rank(MPI_COMM_WORLD, &procId);
-  if (status != MPI_SUCCESS) { 
-	std::cout << "Error while getting process ID";  
-	return -1; 
+  if (status != MPI_SUCCESS) {
+    std::cout << "Error while getting process ID";
+    return -1;
   }
   // Getting number of processes
   status = MPI_Comm_size(MPI_COMM_WORLD, &nProc);
-  if (status != MPI_SUCCESS) { 
-	std::cout << "Error while getting number of processes";  
-	return -1; 
+  if (status != MPI_SUCCESS) {
+    std::cout << "Error while getting number of processes";
+    return -1;
   }
 
-  // Calculating number of rows given to each process 
+  // Calculating number of rows given to each process
   // and allocating auxilary data for parallel calculating
   mSize = atoi(argv[1]);
   tasksize = mSize / nProc;
@@ -74,7 +74,8 @@ int main(int argc, char* argv[]) {
     sqmatr = new double[mSize*(mSize + 1)];
     for (int i = 0; i < mSize; i++)
       for (int j = 0; j < mSize + 1; j++)
-        sqmatr[i*(mSize + 1) + j] = matr[i*(mSize + 1) + j] = (double)(rand() % 20000) / 100.0 - 100.0;
+        sqmatr[i*(mSize + 1) + j] = matr[i*(mSize + 1) + j] = 
+		(rand_r() % 20000) / 100.0 - 100.0;
 
     // If matrix is small enough, then print it
     if (mSize < 11) {
@@ -111,11 +112,10 @@ int main(int argc, char* argv[]) {
     // Output of sequential results
     std::cout << "-------------------------------" << std::endl;
     std::cout << "Sequential solution: " << std::endl;
-	if (mSize < 11) {
-	  for (int i = 0; i < mSize; i++)
-	    std::cout << sqmatr[i*(mSize + 1) + mSize] << " ";
-	}
-    else {
+    if (mSize < 11) {
+    for (int i = 0; i < mSize; i++)
+      std::cout << sqmatr[i*(mSize + 1) + mSize] << " ";
+    } else {
       for (int i = 0; i < 5; i++)
         std::cout << sqmatr[i*(mSize + 1) + mSize] << " ";
       std::cout << "  ...  ";
@@ -132,7 +132,8 @@ int main(int argc, char* argv[]) {
   }
 
   // Scatter required rows between processes
-  MPI_Scatterv(matr, counts, displs, MPI_DOUBLE, buf, counts[procId], MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  MPI_Scatterv(matr, counts, displs, MPI_DOUBLE, buf, 
+	  counts[procId], MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
   // Aux data correction after sending
   for (int i = 0; i < nProc; i++) {
@@ -150,7 +151,6 @@ int main(int argc, char* argv[]) {
       div = buf[(i - displs[control_proc])*(mSize + 1) + i];
       for (int j = i; j < mSize + 1; j++)
         row[j - i] = buf[(i - displs[control_proc])*(mSize + 1) + j] /= div;
-
     }
 
     // Broadcasting pivot row to all processes
@@ -170,19 +170,18 @@ int main(int argc, char* argv[]) {
     partx[j] = buf[j*(mSize + 1) + mSize];
 
   // Gather parts of solution in 0 process
-  MPI_Gatherv(partx, counts[procId], MPI_DOUBLE, x, counts, displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  MPI_Gatherv(partx, counts[procId], MPI_DOUBLE, x, counts, 
+                    displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
 
   // Output parallel results in process 0
-  if (procId == 0)
-  {
+  if (procId == 0) {
     wtime = MPI_Wtime() - wtime;
     std::cout << "Parallel solution: " << std::endl;
-	if (mSize < 11) {
-	  for (int i = 0; i < mSize; i++)
+    if (mSize < 11) {
+      for (int i = 0; i < mSize; i++)
         std::cout << x[i] << " ";
-	}
-    else {
+    } else {
       for (int i = 0; i < 5; i++)
         std::cout << x[i] << " ";
       std::cout << "  ...  ";
