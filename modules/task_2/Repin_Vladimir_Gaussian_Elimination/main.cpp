@@ -1,6 +1,7 @@
 // Copyright mezotaken
 #include <mpi.h>
 #include <iostream>
+#include <random>
 #include <cstdlib>
 #include <ctime>
 
@@ -67,15 +68,15 @@ int main(int argc, char* argv[]) {
 
   if (procId == 0) {
     x = new double[mSize];
-    unsigned int seed = (unsigned int)time(NULL);
-
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> dis(-100, 100);
     // Initializing matrixes
     matr = new double[mSize*(mSize + 1)];
     sqmatr = new double[mSize*(mSize + 1)];
     for (int i = 0; i < mSize; i++)
       for (int j = 0; j < mSize + 1; j++)
-        sqmatr[i*(mSize + 1) + j] = matr[i*(mSize + 1) + j] =
-        (rand_r(&seed) % 20000) / 100.0 - 100.0;
+        sqmatr[i*(mSize + 1) + j] = matr[i*(mSize + 1) + j] = dis(gen);
 
     // If matrix is small enough, then print it
     if (mSize < 11) {
