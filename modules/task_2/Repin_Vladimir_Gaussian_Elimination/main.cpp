@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <cmath>
 
 
 int main(int argc, char* argv[]) {
@@ -70,13 +71,13 @@ int main(int argc, char* argv[]) {
     x = new double[mSize];
     srand((unsigned int)time(NULL));
     // Initializing matrixes
-	matrcopy = new double[mSize*(mSize + 1)];
+    matrcopy = new double[mSize*(mSize + 1)];
     matr = new double[mSize*(mSize + 1)];
     sqmatr = new double[mSize*(mSize + 1)];
     for (int i = 0; i < mSize; i++)
       for (int j = 0; j < mSize + 1; j++)
-        matrcopy[i*(mSize + 1) + j] = sqmatr[i*(mSize + 1) + j] = matr[i*(mSize + 1) + j] =
-        (std::rand() % 20000) / 100.0 - 100.0;
+        matrcopy[i*(mSize + 1) + j] = sqmatr[i*(mSize + 1) + j] =
+        matr[i*(mSize + 1) + j] = (std::rand() % 20000) / 100.0 - 100.0;
 
     // If matrix is small enough, then print it
     if (mSize < 11) {
@@ -114,7 +115,7 @@ int main(int argc, char* argv[]) {
     std::cout << "-------------------------------" << std::endl;
     std::cout << "Sequential absolute error: " << std::endl;
     double error = 0;
-	double part = 0;
+    double part = 0;
     for (int i = 0; i < mSize; i++) {
       part = 0;
       for (int j = 0; j < mSize; j++)
@@ -194,6 +195,7 @@ int main(int argc, char* argv[]) {
   if (procId == 0) {
     delete[] sqmatr;
     delete[] matr;
+    delete[] matrcopy;
     delete[] x;
   }
   delete[] buf;
