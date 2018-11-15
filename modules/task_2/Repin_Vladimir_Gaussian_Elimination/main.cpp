@@ -5,8 +5,7 @@
 #include <ctime>
 
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
   int status,        // MPI functions return status
     procId,        // Current process ID
     nProc;        // Number of processes
@@ -28,15 +27,25 @@ int main(int argc, char* argv[])
 
               // MPI initializing
   status = MPI_Init(&argc, &argv);
-  if (status != MPI_SUCCESS) { std::cout << "Error while MPI Initializing";  return -1; }
+  if (status != MPI_SUCCESS) {
+	std::cout << "Error while MPI Initializing";  
+	return -1; 
+  }
   // Getting process ID
   status = MPI_Comm_rank(MPI_COMM_WORLD, &procId);
-  if (status != MPI_SUCCESS) { std::cout << "Error while getting process ID";  return -1; }
+  if (status != MPI_SUCCESS) { 
+	std::cout << "Error while getting process ID";  
+	return -1; 
+  }
   // Getting number of processes
   status = MPI_Comm_size(MPI_COMM_WORLD, &nProc);
-  if (status != MPI_SUCCESS) { std::cout << "Error while getting number of processes";  return -1; }
+  if (status != MPI_SUCCESS) { 
+	std::cout << "Error while getting number of processes";  
+	return -1; 
+  }
 
-  // Calculating number of rows given to each process and allocating auxilary data for parallel calculating
+  // Calculating number of rows given to each process 
+  // and allocating auxilary data for parallel calculating
   mSize = atoi(argv[1]);
   tasksize = mSize / nProc;
 
@@ -44,8 +53,7 @@ int main(int argc, char* argv[])
   displs = new int[nProc];
   row = new double[mSize + 1];
 
-  for (int i = 0; i < nProc; i++)
-  {
+  for (int i = 0; i < nProc; i++) {
     counts[i] = tasksize;
     if (i < mSize%nProc)
       counts[i]++;
@@ -57,8 +65,7 @@ int main(int argc, char* argv[])
   buf = new double[counts[procId]];
   partx = new double[counts[procId] / (mSize + 1)];
 
-  if (procId == 0)
-  {
+  if (procId == 0) {
     x = new double[mSize];
     srand((unsigned int)time(NULL));
 
@@ -70,11 +77,9 @@ int main(int argc, char* argv[])
         sqmatr[i*(mSize + 1) + j] = matr[i*(mSize + 1) + j] = (double)(rand() % 20000) / 100.0 - 100.0;
 
     // If matrix is small enough, then print it
-    if (mSize < 11)
-    {
+    if (mSize < 11) {
       std::cout << "Matrix" << std::endl;
-      for (int i = 0; i < mSize; i++)
-      {
+      for (int i = 0; i < mSize; i++) {
         for (int j = 0; j < mSize + 1; j++)
           std::cout << matr[i*(mSize + 1) + j] << " ";
         std::cout << std::endl;
@@ -84,8 +89,7 @@ int main(int argc, char* argv[])
     // Sequential part
     wtime = MPI_Wtime();
 
-    for (int i = 0; i < mSize; i++)
-    {
+    for (int i = 0; i < mSize; i++) {
       // Divide pivot row by pivot value
       div = sqmatr[i*(mSize + 1) + i];
       sqmatr[i*(mSize + 1) + i] = 1;
@@ -94,8 +98,7 @@ int main(int argc, char* argv[])
 
       // Substract pivot row from every other row
       for (int j = 0; j < mSize; j++)
-        if (j != i)
-        {
+        if (j != i) {
           div = sqmatr[j*(mSize + 1) + i];
           for (int k = i; k < mSize + 1; k++)
             sqmatr[j*(mSize + 1) + k] -= sqmatr[i*(mSize + 1) + k] * div;
@@ -108,11 +111,11 @@ int main(int argc, char* argv[])
     // Output of sequential results
     std::cout << "-------------------------------" << std::endl;
     std::cout << "Sequential solution: " << std::endl;
-    if (mSize < 11)
-      for (int i = 0; i < mSize; i++)
-        std::cout << sqmatr[i*(mSize + 1) + mSize] << " ";
-    else
-    {
+	if (mSize < 11) {
+	  for (int i = 0; i < mSize; i++)
+	    std::cout << sqmatr[i*(mSize + 1) + mSize] << " ";
+	}
+    else {
       for (int i = 0; i < 5; i++)
         std::cout << sqmatr[i*(mSize + 1) + mSize] << " ";
       std::cout << "  ...  ";
@@ -132,21 +135,18 @@ int main(int argc, char* argv[])
   MPI_Scatterv(matr, counts, displs, MPI_DOUBLE, buf, counts[procId], MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
   // Aux data correction after sending
-  for (int i = 0; i < nProc; i++)
-  {
+  for (int i = 0; i < nProc; i++) {
     displs[i] /= (mSize + 1);
     counts[i] /= (mSize + 1);
   }
 
-  for (int i = 0; i < mSize; i++)
-  {
+  for (int i = 0; i < mSize; i++) {
     // Choosing control process depending on current row
     if (i == displs[control_proc + 1])
       control_proc++;
 
     // Divide pivot row by pivot value
-    if (procId == control_proc)
-    {
+    if (procId == control_proc) {
       div = buf[(i - displs[control_proc])*(mSize + 1) + i];
       for (int j = i; j < mSize + 1; j++)
         row[j - i] = buf[(i - displs[control_proc])*(mSize + 1) + j] /= div;
@@ -158,8 +158,7 @@ int main(int argc, char* argv[])
 
     // Substract pivot row from every other row
     for (int j = 0; j < counts[procId]; j++)
-      if (j + displs[procId] != i)
-      {
+      if (j + displs[procId] != i) {
         div = buf[j*(mSize + 1) + i];
         for (int k = i; k < mSize + 1; k++)
           buf[j*(mSize + 1) + k] -= row[k - i] * div;
@@ -179,11 +178,11 @@ int main(int argc, char* argv[])
   {
     wtime = MPI_Wtime() - wtime;
     std::cout << "Parallel solution: " << std::endl;
-    if (mSize < 11)
-      for (int i = 0; i < mSize; i++)
+	if (mSize < 11) {
+	  for (int i = 0; i < mSize; i++)
         std::cout << x[i] << " ";
-    else
-    {
+	}
+    else {
       for (int i = 0; i < 5; i++)
         std::cout << x[i] << " ";
       std::cout << "  ...  ";
@@ -196,8 +195,7 @@ int main(int argc, char* argv[])
   }
 
   // Free allocated memory
-  if (procId == 0)
-  {
+  if (procId == 0) {
     delete[] sqmatr;
     delete[] matr;
     delete[] x;
