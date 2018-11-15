@@ -59,3 +59,4 @@ build_script:
   # - cmd: mpiexec.exe -np 4 modules\task_1\Yunin_Ivan_maximum_elem_vector\%configuration%\Yunin_Ivan_maximum_elem_vector.exe 100
   # - cmd: mpiexec.exe -np 4 modules\task_2\Gaidaichuk_Yuri_task2_Bubble_sorting\%configuration%\Gaidaichuk_Yuri_task2_Bubble_sorting.exe 9
   - cmd: mpiexec.exe -np 4 modules\task_2\Perov_Dima_task2_ProducerConsumer\%configuration%\Perov_Dima_task2_ProducerConsumer.exe 10 5 5 1 2
+  - cmd: mpiexec.exe -np 5 modules\task_2\Vdovin_Eugene_task2_Readers_and_Writers\%configuration%\Vdovin_Eugene_task2_Readers_and_Writers.exe 2 60
