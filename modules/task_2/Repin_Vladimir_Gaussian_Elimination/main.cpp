@@ -68,9 +68,9 @@ int main(int argc, char* argv[]) {
 
   if (procId == 0) {
     x = new double[mSize];
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dis(-100, 100);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(-100, 100);
     // Initializing matrixes
     matr = new double[mSize*(mSize + 1)];
     sqmatr = new double[mSize*(mSize + 1)];
