@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < mSize; i++)
       for (int j = 0; j < mSize + 1; j++)
         sqmatr[i*(mSize + 1) + j] = matr[i*(mSize + 1) + j] =
-        (rand() % 20000) / 100.0 - 100.0;
+        (std::rand() % 20000) / 100.0 - 100.0;
 
     // If matrix is small enough, then print it
     if (mSize < 11) {
