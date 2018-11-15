@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
 
   if (procId == 0) {
     x = new double[mSize];
-    unsigned int seed = srand((unsigned int)time(NULL));
+    unsigned int seed = (unsigned int)time(NULL);
 
     // Initializing matrixes
     matr = new double[mSize*(mSize + 1)];
