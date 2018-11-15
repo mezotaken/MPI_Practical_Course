@@ -65,3 +65,4 @@ script:
   # - mpirun -np 4 ./modules/task_2/Gaidaichuk_Yuri_task2_Bubble_sorting/Gaidaichuk_Yuri_task2_Bubble_sorting 9
   - mpirun -np 4 ./modules/task_2/Perov_Dima_task2_ProducerConsumer/Perov_Dima_task2_ProducerConsumer 10 5 5 1 2
   - mpirun -np 5 ./modules/task_2/Vdovin_Eugene_task2_Readers_and_Writers/Vdovin_Eugene_task2_Readers_and_Writers 2 60
+  - mpirun -np 4 ./modules/task_2/Repin_Vladimir_Gaussian_Elimination/Repin_Vladimir_Gaussian_Elimination 500
