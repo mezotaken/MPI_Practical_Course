@@ -12,6 +12,7 @@ int main(int argc, char* argv[]) {
 
   double* matr = NULL;  // matrix n * n+1 for parallel algorithm
   double* sqmatr = NULL;  // matrix n * n+1 for sequential algorithm
+  double* matrcopy = NULL;
   int mSize = 0;      // Size of processed matrix
   double wtime = 0;    // Work Time
   double div = 0;      // Multiplier for rows
@@ -69,11 +70,12 @@ int main(int argc, char* argv[]) {
     x = new double[mSize];
     srand((unsigned int)time(NULL));
     // Initializing matrixes
+	matrcopy = new double[mSize*(mSize + 1)];
     matr = new double[mSize*(mSize + 1)];
     sqmatr = new double[mSize*(mSize + 1)];
     for (int i = 0; i < mSize; i++)
       for (int j = 0; j < mSize + 1; j++)
-        sqmatr[i*(mSize + 1) + j] = matr[i*(mSize + 1) + j] =
+        matrcopy[i*(mSize + 1) + j] = sqmatr[i*(mSize + 1) + j] = matr[i*(mSize + 1) + j] =
         (std::rand() % 20000) / 100.0 - 100.0;
 
     // If matrix is small enough, then print it
@@ -110,22 +112,19 @@ int main(int argc, char* argv[]) {
 
     // Output of sequential results
     std::cout << "-------------------------------" << std::endl;
-    std::cout << "Sequential solution: " << std::endl;
-    if (mSize < 11) {
-    for (int i = 0; i < mSize; i++)
-      std::cout << sqmatr[i*(mSize + 1) + mSize] << " ";
-    } else {
-      for (int i = 0; i < 5; i++)
-        std::cout << sqmatr[i*(mSize + 1) + mSize] << " ";
-      std::cout << "  ...  ";
-      for (int i = mSize - 5; i < mSize; i++)
-        std::cout << sqmatr[i*(mSize + 1) + mSize] << " ";
+    std::cout << "Sequential absolute error: " << std::endl;
+    double error = 0;
+	double part = 0;
+    for (int i = 0; i < mSize; i++) {
+      part = 0;
+      for (int j = 0; j < mSize; j++)
+        part += matrcopy[i*(mSize + 1) + j] * sqmatr[j*(mSize + 1) + mSize];
+      error += (part - matrcopy[i*(mSize + 1) + mSize])*
+               (part - matrcopy[i*(mSize + 1) + mSize]);
     }
+    std::cout << sqrt(error);
     std::cout << std::endl;
     std::cout << "Sequential time = " << wtime << std::endl << std::endl;
-
-
-
     // Parallel part
     wtime = MPI_Wtime();
   }
@@ -176,17 +175,16 @@ int main(int argc, char* argv[]) {
   // Output parallel results in process 0
   if (procId == 0) {
     wtime = MPI_Wtime() - wtime;
-    std::cout << "Parallel solution: " << std::endl;
-    if (mSize < 11) {
-      for (int i = 0; i < mSize; i++)
-        std::cout << x[i] << " ";
-    } else {
-      for (int i = 0; i < 5; i++)
-        std::cout << x[i] << " ";
-      std::cout << "  ...  ";
-      for (int i = mSize - 5; i < mSize; i++)
-        std::cout << x[i] << " ";
+    double error = 0;
+    double part = 0;
+    for (int i = 0; i < mSize; i++) {
+      part = 0;
+      for (int j = 0; j < mSize; j++)
+        part += matrcopy[i*(mSize + 1) + j] * x[j];
+      error += (part - matrcopy[i*(mSize + 1) + mSize])*
+               (part - matrcopy[i*(mSize + 1) + mSize]);
     }
+    std::cout << sqrt(error);
     std::cout << std::endl;
     std::cout << "Parallel time: " << wtime << std::endl;
     std::cout << "-------------------------------" << std::endl;
