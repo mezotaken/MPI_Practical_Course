@@ -13,7 +13,7 @@ double givenFunction(double a1) {
   return a1*a1;
 }
 
-double myRand(double fMin, double fMax){
+double myRand(double fMin, double fMax) {
     double f = static_cast<double>rand() / RAND_MAX;
     return fMin + f * (fMax - fMin);
 }
