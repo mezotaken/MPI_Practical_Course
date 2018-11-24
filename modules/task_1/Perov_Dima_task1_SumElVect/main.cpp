@@ -49,6 +49,9 @@ int main(int argc, char *argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &numProcs); // determining the number of processes in a group
     MPI_Comm_rank(MPI_COMM_WORLD, &myId); // determining the rank of a process in a group
 
+	double* myBlock;
+	myBlock = new double[size / numProcs];
+
     if (myId == 0) {
 
         for (int i = 0; i < size; i++) {
@@ -71,11 +74,19 @@ int main(int argc, char *argv[])
 
     }
 
-    MPI_Bcast(myVector, size , MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    //MPI_Bcast(myVector, size , MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
+	MPI_Scatter(myVector, size / numProcs, MPI_DOUBLE, myBlock, size / numProcs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+	for (int i = 0; i < size / numProcs; i++) {
+		mySum += myBlock[i];
+	}
+
+	/*
     for (int i = size / numProcs * myId; i < size / numProcs + size / numProcs * myId; i++) {
         mySum += myVector[i];
     }
+	*/
 
     MPI_Reduce(&mySum, &myResult, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
