@@ -1,4 +1,4 @@
-project( Gaidaichuk_Yuri_task2_Monte_Carlo )
+project( Gaidaichuk_Yuri_task3_Monte_Carlo )
 
 message( STATUS "-- " ${PROJECT_NAME} )
 add_executable( ${PROJECT_NAME} main.cpp )
