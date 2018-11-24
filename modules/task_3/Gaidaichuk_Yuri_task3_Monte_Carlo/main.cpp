@@ -13,34 +13,33 @@ double givenFunction(double a1) {
   return a1*a1;
 }
 
-double myRand(double fMin, double fMax)
-{
-    double f = (double)rand() / RAND_MAX;
+double myRand(double fMin, double fMax){
+    double f = static_cast<double>rand() / RAND_MAX;
     return fMin + f * (fMax - fMin);
 }
 
-double sequenceMonteCarloSum(int setPower){
+double sequenceMonteCarloSum(int setPower) {
   int seed = static_cast<int>(MPI_Wtime());
   std::srand(seed);
   double sum = 0;
-  for(int i = 0; i < setPower; i++) {
+  for (int i = 0; i < setPower; i++) {
     double randomArg = myRand(leftBoard, rightBoard);
     double part = givenFunction(randomArg);
     sum += part;
   }
-	return sum;
+  return sum;
 }
 
-double partialMonteCarloSum(int partialSetPower, int rank){
+double partialMonteCarloSum(int partialSetPower, int rank) {
   // initialize specific seed
   int seed = static_cast<int>(MPI_Wtime()) * rank;
   std::srand(seed);
   double partialSum = 0;
-  for(int i = 0; i < partialSetPower; i++) {
+  for (int i = 0; i < partialSetPower; i++) {
     double randomArg = myRand(leftBoard, rightBoard);
     partialSum += givenFunction(randomArg);
   }
-	return partialSum;
+  return partialSum;
 }
 
 int main(int argc, char * argv[]) {
@@ -75,13 +74,16 @@ int main(int argc, char * argv[]) {
   MPI_Barrier(MPI_COMM_WORLD);
   parTime1 = MPI_Wtime();
   localMonteCarloIntegral = partialMonteCarloSum(setPower / procNum, rank);
-  MPI_Reduce(&localMonteCarloIntegral, &globalMonteCarloIntegral, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+  MPI_Reduce(&localMonteCarloIntegral, &globalMonteCarloIntegral, 1,
+    MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   parTime2 = MPI_Wtime();
   if (rank == 0) {
-    std::cout << "Parallel result = " << globalMonteCarloIntegral / setPower << "\n";
+    std::cout << "Parallel result = " <<
+      globalMonteCarloIntegral / setPower << "\n";
     std::cout << "Time consumed = "<< parTime2 - parTime1 << " sec\n";
     seqTime1 = MPI_Wtime();
-    std::cout << "Sequence result = " << sequenceMonteCarloSum(setPower) / setPower << "\n";
+    std::cout << "Sequence result = " <<
+      sequenceMonteCarloSum(setPower) / setPower << "\n";
     seqTime2 = MPI_Wtime();
     std::cout << "Time consumed = "<< seqTime2 - seqTime1 << " sec\n";
   }
@@ -89,6 +91,3 @@ int main(int argc, char * argv[]) {
   assert(status == MPI_SUCCESS);
   return 0;
 }
-// исправить последовательный 
-// обновить трэвис
-// залить
