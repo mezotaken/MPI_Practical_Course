@@ -153,7 +153,7 @@ int main(int argc, char * argv[]) {
   // чтобы были разные наборы
   MPI_Barrier(MPI_COMM_WORLD);
   parTime1 = MPI_Wtime();
-  localMonteCarloIntegral = 
+  localMonteCarloIntegral =
     partial3dMonteCarloSum(setPower, procNum, rank, boundaries);
   MPI_Reduce(&localMonteCarloIntegral, &globalMonteCarloIntegral, 1,
     MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
