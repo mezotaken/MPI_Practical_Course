@@ -15,22 +15,22 @@ double given1dFunction(double a1) {
   return a1*a1;
 }
 
-double riman3dIntegral(int setPower, double boundaries[3][2]){
+double riman3dIntegral(int setPower, double boundaries[3][2]) {
   double a1 = boundaries[0][0];
   double b1 = boundaries[0][1];
   double a2 = boundaries[1][0];
   double b2 = boundaries[1][1];
   double a3 = boundaries[2][0];
   double b3 = boundaries[2][1];
-  if((a1 >= b1) || (a2 >= b2) || (a3 >= b3)) {
+  if ((a1 >= b1) || (a2 >= b2) || (a3 >= b3)) {
     return 0;
   }
   double sum = 0;
-  for(int i = 0; i < setPower; i++){
+  for (int i = 0; i < setPower; i++) {
     double innerSum1 = 0;
-    for(int j = 0; j < setPower; j++) {
+    for (int j = 0; j < setPower; j++) {
       double innerSum2 = 0;
-      for(int k = 0; k < setPower; k++) {
+      for (int k = 0; k < setPower; k++) {
         double xI = a1 + (b1 - a1) * (static_cast<double>(i) / setPower);
         double yI = a2 + (b2 - a2) * (static_cast<double>(j) / setPower);
         double zI = a3 + (b3 - a3) * (static_cast<double>(k) / setPower);
@@ -60,14 +60,14 @@ double sequence3dMonteCarloSum(int setPower, double boundaries[3][2]) {
   double b2 = boundaries[1][1];
   double a3 = boundaries[2][0];
   double b3 = boundaries[2][1];
-  if((a1 >= b1) || (a2 >= b2) || (a3 >= b3)) {
+  if ((a1 >= b1) || (a2 >= b2) || (a3 >= b3)) {
     return 0;
   }
   for (int i = 0; i < setPower; i++) {
     double innerPart1 = 0;
-    for(int j = 0; j < setPower; j++) {
+    for (int j = 0; j < setPower; j++) {
       double innerPart2 = 0;
-      for(int k = 0; k < setPower; k++) {
+      for (int k = 0; k < setPower; k++) {
         double randomArg1 = myRand(a1, b1);
         double randomArg2 = myRand(a2, b2);
         double randomArg3 = myRand(a3, b3);
@@ -81,14 +81,16 @@ double sequence3dMonteCarloSum(int setPower, double boundaries[3][2]) {
   return part * (b1 - a1) * (b2 - a2) * (b3 - a3) / setPower;
 }
 
-double partial3dMonteCarloSum(int setPower, int procNum, int rank, double boundaries[3][2]) {
+double partial3dMonteCarloSum(
+  int setPower, int procNum,  int rank, double boundaries[3][2]
+  ) {
   double a1 = boundaries[0][0];
   double b1 = boundaries[0][1];
   double a2 = boundaries[1][0];
   double b2 = boundaries[1][1];
   double a3 = boundaries[2][0];
   double b3 = boundaries[2][1];
-  if((a1 >= b1) || (a2 >= b2) || (a3 >= b3)) {
+  if ((a1 >= b1) || (a2 >= b2) || (a3 >= b3)) {
     return 0;
   }
   // initialize specific seed
@@ -97,9 +99,9 @@ double partial3dMonteCarloSum(int setPower, int procNum, int rank, double bounda
   double partialSum = 0;
   for (int i = 0; i < setPower; i++) {
     double innerPart1 = 0;
-    for(int j = 0; j < setPower; j++) {
+    for (int j = 0; j < setPower; j++) {
       double innerPart2 = 0;
-      for(int k = 0; k < setPower / procNum; k++) {
+      for (int k = 0; k < setPower / procNum; k++) {
         double randomArg1 = myRand(a1, b1);
         double randomArg2 = myRand(a2, b2);
         double randomArg3 = myRand(a3, b3);
@@ -119,9 +121,11 @@ int main(int argc, char * argv[]) {
   int setPower = atoi(argv[1]);
   double localMonteCarloIntegral = 0;
   double globalMonteCarloIntegral = 0;
-  double parTime1 = 0, parTime2 = 0, seqTime1 = 0, seqTime2 = 0, rimanTime1 = 0, rimanTime2 = 0;
+  double parTime1 = 0, parTime2 = 0,
+    seqTime1 = 0, seqTime2 = 0,
+    rimanTime1 = 0, rimanTime2 = 0;
   double boundaries[3][2] = {{0.0, 1.0}, {0.0, 1.0}, {0.0, 1.0}};
-  for(int i = 0; i < 3; i ++){
+  for (int i = 0; i < 3; i ++) {
     boundaries[i][0] = atof(argv[2 + 2 * i]);
     boundaries[i][1] = atof(argv[3 + 2 * i]);
   }
@@ -149,7 +153,8 @@ int main(int argc, char * argv[]) {
   // чтобы были разные наборы
   MPI_Barrier(MPI_COMM_WORLD);
   parTime1 = MPI_Wtime();
-  localMonteCarloIntegral = partial3dMonteCarloSum(setPower, procNum, rank, boundaries);
+  localMonteCarloIntegral = 
+    partial3dMonteCarloSum(setPower, procNum, rank, boundaries);
   MPI_Reduce(&localMonteCarloIntegral, &globalMonteCarloIntegral, 1,
     MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   parTime2 = MPI_Wtime();
@@ -163,7 +168,7 @@ int main(int argc, char * argv[]) {
       sequence3dMonteCarloSum(setPower, boundaries) << "\t\t";
     seqTime2 = MPI_Wtime();
     std::cout << seqTime2 - seqTime1 << " sec\n";
-    if(setPower < MAX_CHECKING_SET_POWER) {
+    if (setPower < MAX_CHECKING_SET_POWER) {
       rimanTime1 = MPI_Wtime();
         std::cout << "Riman\t\t\t" <<
       riman3dIntegral(setPower, boundaries) << "\t\t";
