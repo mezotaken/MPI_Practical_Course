@@ -116,7 +116,6 @@ double partial3dMonteCarloSum(
 }
 
 int main(int argc, char * argv[]) {
-  double a = atof(argv[2]);
   int status = 0, rank = 0, procNum = 0;
   int setPower = atoi(argv[1]);
   double localMonteCarloIntegral = 0;
