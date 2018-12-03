@@ -72,3 +72,4 @@ script:
   # - mpirun -np 4 ./modules/task_2/Druzhinin_Alexei_mul_matrix/Druzhinin_Alexei_mul_matrix 1000 1000 1000 1000
   # - mpirun -np 4 ./modules/task_2/Zolotareva_Olesya_task2_Reduce/Zolotareva_Olesya_task2_Reduce 100
   # - mpirun -np 10 ./modules/task_2/ndanilov_topologies/ndanilov_topologies 7 3 Hello
+  - mpirun -np 4 ./modules/task_3/ndanilov_qsort/ndanilov_qsort 10
