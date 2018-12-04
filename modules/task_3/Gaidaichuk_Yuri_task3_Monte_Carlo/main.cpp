@@ -10,7 +10,7 @@
 
 double given3dFunction(double x1, double x2, double x3) {
   double res1 = std::exp(-x1 * x2);
-  double res2 = std::sin(x2 + x3)/(x2 + x3);
+  double res2 = std::sin(x2 + x3) / (x2 + x3);
   double res3 = std::cos(x1 * x3);
   return res1 + res2 + res3;
 }
