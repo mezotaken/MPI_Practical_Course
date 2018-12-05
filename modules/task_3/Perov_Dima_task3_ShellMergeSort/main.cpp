@@ -69,7 +69,7 @@ double *SortMerge(double *myVector, double *myBuffer, unsigned borderLeft,
 }
 
 int main(int argc, char *argv[]) {
-  srand((int)time(0));
+  srand(static_cast<int>(time(0)));
 
   double *plVector;
   double *lnVector;
@@ -121,8 +121,8 @@ int main(int argc, char *argv[]) {
 
   if (myId == 0) {
     for (unsigned i = 0; i < vectorSize; i++) {
-      lnVector[i] = (double)(rand() % 50) / ((double)(rand() % 100) + 1) -
-                    (double)(rand() % 50) / ((double)(rand() % 100) + 1);
+      lnVector[i] = static_cast<double>(std::rand() % 50) / (static_cast<double>(std::rand() % 100) + 1) -
+                    static_cast<double>(std::rand() % 50) / (static_cast<double>(std::rand() % 100) + 1);
       plVector[i] = lnVector[i];
     }
 
