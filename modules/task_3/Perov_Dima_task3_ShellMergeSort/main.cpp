@@ -75,9 +75,9 @@ int main(int argc, char *argv[]) {
   double *lnVector;
   size_t vectorSize;
 
-  std::string ñommandArgument;
-  ñommandArgument = argv[1];
-  vectorSize = atoi(ñommandArgument.c_str());
+  std::string commandArgument;
+  commandArgument = argv[1];
+  vectorSize = atoi(commandArgument.c_str());
 
   plVector = new double[vectorSize];
   lnVector = new double[vectorSize];
@@ -121,9 +121,9 @@ int main(int argc, char *argv[]) {
 
   if (myId == 0) {
     for (unsigned i = 0; i < vectorSize; i++) {
-      lnVector[i] = static_cast<double>(std::rand() % 50) / 
+      lnVector[i] = static_cast<double>(std::rand() % 50) /
                    (static_cast<double>(std::rand() % 100) + 1) -
-                    static_cast<double>(std::rand() % 50) / 
+                    static_cast<double>(std::rand() % 50) /
                    (static_cast<double>(std::rand() % 100) + 1);
       plVector[i] = lnVector[i];
     }
