@@ -14,6 +14,15 @@ void GetVectorInfo(const double *myVector, size_t mySize) {
   std::cout << std::endl;
 }
 
+int Test(const double *firstVector, const double *secondVector, size_t mySize) {
+  for (unsigned i = 0; i < mySize; i++) {
+    if (firstVector[i] != secondVector[i]) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
 void SortShell(double *myVector, size_t mySize) {
   unsigned i, j, k;
   double t;
@@ -166,7 +175,15 @@ int main(int argc, char *argv[]) {
     std::cout << std::endl << "*PARALLEL*";
     std::cout << std::endl << "ShellMergeSortTime: " << plWorkTime << std::endl;
 
-    if (vectorSize <= 10) GetVectorInfo(lnVector, vectorSize);
+    if (Test(lnVector, plVector, vectorSize)) {
+      if (vectorSize <= 10) GetVectorInfo(plVector, vectorSize);
+      std::cout << std::endl << "Result: plVector" << std::endl;
+    }
+
+    if (Test(lnVector, plBuffer, vectorSize)) {
+      if (vectorSize <= 10) GetVectorInfo(plBuffer, vectorSize);
+      std::cout << std::endl << "Result: plBuffer" << std::endl;
+    }
 
     std::cout << std::endl
               << "SPEED-UP: " << lnWorkTime / plWorkTime << std::endl;
