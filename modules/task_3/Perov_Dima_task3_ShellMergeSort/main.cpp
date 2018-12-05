@@ -121,8 +121,10 @@ int main(int argc, char *argv[]) {
 
   if (myId == 0) {
     for (unsigned i = 0; i < vectorSize; i++) {
-      lnVector[i] = static_cast<double>(std::rand() % 50) / (static_cast<double>(std::rand() % 100) + 1) -
-                    static_cast<double>(std::rand() % 50) / (static_cast<double>(std::rand() % 100) + 1);
+      lnVector[i] = static_cast<double>(std::rand() % 50) / 
+                   (static_cast<double>(std::rand() % 100) + 1) -
+                    static_cast<double>(std::rand() % 50) / 
+                   (static_cast<double>(std::rand() % 100) + 1);
       plVector[i] = lnVector[i];
     }
 
