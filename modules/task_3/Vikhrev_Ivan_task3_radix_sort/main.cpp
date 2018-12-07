@@ -35,10 +35,10 @@ uint32_t* merge(uint32_t *arr1, uint32_t num1, uint32_t *arr2, uint32_t num2) {
     return res;
 }
 
-void rad_sort_u(uint32_t *from, uint32_t *to, unsigned bit) {
+void rad_sort_1(uint32_t *from, uint32_t *to, uint32_t bit) {
     if (!bit || to < from + 1) return;
 
-    unsigned *ll = from, *rr = to - 1;
+    uint32_t *ll = from, *rr = to - 1;
 
     for (;;) {
         while (ll < rr && !(*ll & bit)) ll++;
@@ -50,10 +50,40 @@ void rad_sort_u(uint32_t *from, uint32_t *to, unsigned bit) {
     if (!(bit & *ll) && ll < to) ll++;
     bit >>= 1;
 
-    rad_sort_u(from, ll, bit);
-    rad_sort_u(ll, to, bit);
+    rad_sort_1(from, ll, bit);
+    rad_sort_1(ll, to, bit);
 }
 
+void rad_sort_2(uint32_t * a, size_t count) {
+    size_t mIndex[4][256] = { 0 };  // count / index matrix
+    uint32_t *b = new uint32_t[count];  // allocate temp array
+    size_t i, j, m, n;
+    uint32_t u;
+    for (i = 0; i < count; i++) {
+        u = a[i];
+        for (j = 0; j < 4; j++) {
+            mIndex[j][static_cast<size_t>(u & 0xff)]++;
+            u >>= 8;
+        }
+    }
+    for (j = 0; j < 4; j++) {  // convert to indices
+        m = 0;
+        for (i = 0; i < 256; i++) {
+            n = mIndex[j][i];
+            mIndex[j][i] = m;
+            m += n;
+        }
+    }
+    for (j = 0; j < 4; j++) {  // radix sort
+        for (i = 0; i < count; i++) {  // sort by current lsb
+            u = a[i];
+            m = static_cast<size_t>(u >> (j << 3)) & 0xff;
+            b[mIndex[j][m]++] = u;
+        }
+        std::swap(a, b);  // swap ptrs
+    }
+    delete[] b;
+}
 bool is_sorted(uint32_t* arr, uint32_t size) {
     bool flag = 1;
     for (uint32_t i = 0; i < size - 1; i++)
@@ -66,8 +96,8 @@ bool is_sorted(uint32_t* arr, uint32_t size) {
 
 int main(int argc, char** argv) {
     int status = 0, rank = 0, size = 0;  // MPI vars
-    int *scounts = NULL,  // use in scatterv and gatherv
-        *displs = NULL;   // use in scatterv and gatherv
+    int *scounts = NULL,  // use in scatterv
+        *displs = NULL;  // use in scatterv
     uint32_t arrSize = 0;
     uint32_t  *arr = NULL,  // data
               *buff = NULL,  // buffers for message exchanging
@@ -75,6 +105,7 @@ int main(int argc, char** argv) {
               *resultS = NULL,  // results
               *resultP = NULL;
     double t1 = 0, t2 = 0;
+    int type_sort = 0;
     status = MPI_Init(&argc, &argv);
     if (status != MPI_SUCCESS) {
      return -1;
@@ -91,10 +122,13 @@ int main(int argc, char** argv) {
     }
 
     if (rank == MainProc) {
-        if (argc > 1)
+        if (argc > 1) {
             arrSize = atoi(argv[1]);
-        else
+            if (argc > 2) type_sort = atoi(argv[2]);
+        } else {
             arrSize = 10;
+            type_sort = 0;
+          }
         std::cout << "  Array size : " << arrSize << std::endl;
         arr = new uint32_t[arrSize];
         resultS = new uint32_t[arrSize];
@@ -108,7 +142,10 @@ int main(int argc, char** argv) {
             std::cout << std::endl;
         }
         t1 = MPI_Wtime();
-        rad_sort_u(resultS, resultS + arrSize, INT_MIN);
+        if (type_sort == 0)
+            rad_sort_1(resultS, resultS + arrSize, INT_MIN);
+        else
+            rad_sort_2(resultS, arrSize);
         t2 = MPI_Wtime();
         std::cout << "  Sequential Time: " << t2 - t1 << std::endl;
         if (bool f = is_sorted(resultS, arrSize))
@@ -126,6 +163,7 @@ int main(int argc, char** argv) {
     MPI_Barrier(MPI_COMM_WORLD);
     t1 = MPI_Wtime();
     MPI_Bcast(&arrSize, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
+    MPI_Bcast(&type_sort, 1, MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
     scounts = new int[size];
     displs = new int[size];
     displs[0] = 0;
@@ -140,7 +178,10 @@ int main(int argc, char** argv) {
     MPI_Scatterv(arr, scounts, displs, MPI_UNSIGNED, buff,
         scounts[rank], MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
 
-    rad_sort_u(buff, buff + scounts[rank], INT_MIN);
+    if (type_sort == 0)
+        rad_sort_1(buff, buff + scounts[rank], INT_MIN);
+    else
+        rad_sort_2(buff, scounts[rank]);
 
     if (rank != 0)
         MPI_Send(buff, scounts[rank], MPI_UNSIGNED, MainProc,
