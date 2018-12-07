@@ -68,7 +68,7 @@ sum += sin(sin(sin(i)))*sin(sin(sin(i))) + cos(sin(sin(i)))*cos(sin(sin(i)));
   return -1.0 * x + sin(3.0 * x) - 1.0 + sum;
 }
 
-double((*f[7]))(double x) = { f1, f2, f3, f4, f5, f6, f7 };
+double (*f[7])(double) = { f1, f2, f3, f4, f5, f6, f7 };
 
 struct limit {
   double a;
