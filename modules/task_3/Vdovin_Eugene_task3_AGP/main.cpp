@@ -15,7 +15,7 @@
 double f1(double x) {
   double sum = 0.0;
   for (int i = 1; i <= 100000; i++ )
-    sum += sin(sin(sin(i))) * sin(sin(sin(i))) + cos(sin(sin(i))) * cos(sin(sin(i)));
+sum += sin(sin(sin(i)))*sin(sin(sin(i))) + cos(sin(sin(i)))*cos(sin(sin(i)));
   sum -= 100000;
   return sin(x) + sin(10.0 * x / 3.0) + sum;
 }
@@ -23,7 +23,7 @@ double f1(double x) {
 double f2(double x) {
   double sum = 0.0;
   for (int i = 1; i <= 100000; i++ )
-    sum += sin(sin(sin(i))) * sin(sin(sin(i))) + cos(sin(sin(i))) * cos(sin(sin(i)));
+sum += sin(sin(sin(i)))*sin(sin(sin(i))) + cos(sin(sin(i)))*cos(sin(sin(i)));
   sum -= 100000;
   return (3.0 * x - 1.4) * sin(18.0 * x) + sum;
 }
@@ -31,7 +31,7 @@ double f2(double x) {
 double f3(double x) {
   double sum = 0.0;
   for (int i = 1; i <= 100000; i++ )
-    sum += sin(sin(sin(i))) * sin(sin(sin(i))) + cos(sin(sin(i))) * cos(sin(sin(i)));
+sum += sin(sin(sin(i)))*sin(sin(sin(i))) + cos(sin(sin(i)))*cos(sin(sin(i)));
   sum -= 100000;
   return -1.0 * (x + sin(x)) * exp(-1.0 * x * x) + sum;
 }
@@ -39,7 +39,7 @@ double f3(double x) {
 double f4(double x) {
   double sum = 0.0;
   for (int i = 1; i <= 100000; i++ )
-    sum += sin(sin(sin(i))) * sin(sin(sin(i))) + cos(sin(sin(i))) * cos(sin(sin(i)));
+sum += sin(sin(sin(i)))*sin(sin(sin(i))) + cos(sin(sin(i)))*cos(sin(sin(i)));
   sum -= 100000;
   return sin(x) + sin(10.0 * x / 3.0) + log(x) - 0.84 * x + 3.0 + sum;
 }
@@ -47,7 +47,7 @@ double f4(double x) {
 double f5(double x) {
   double sum = 0.0;
   for (int i = 1; i <= 100000; i++ )
-    sum += sin(sin(sin(i))) * sin(sin(sin(i))) + cos(sin(sin(i))) * cos(sin(sin(i)));
+sum += sin(sin(sin(i)))*sin(sin(sin(i))) + cos(sin(sin(i)))*cos(sin(sin(i)));
   sum -= 100000;
   return -1.0 * sin(2.0 * pi * x) * exp(-1.0 * x) + sum;
 }
@@ -55,7 +55,7 @@ double f5(double x) {
 double f6(double x) {
   double sum = 0.0;
   for (int i = 1; i <= 100000; i++ )
-    sum += sin(sin(sin(i))) * sin(sin(sin(i))) + cos(sin(sin(i))) * cos(sin(sin(i)));
+sum += sin(sin(sin(i)))*sin(sin(sin(i))) + cos(sin(sin(i)))*cos(sin(sin(i)));
   sum -= 100000;
   return (x * x - 5.0 * x + 6.0) / (x * x + 1.0) + sum;
 }
@@ -63,7 +63,7 @@ double f6(double x) {
 double f7(double x) {
   double sum = 0.0;
   for (int i = 1; i <= 100000; i++ )
-    sum += sin(sin(sin(i))) * sin(sin(sin(i))) + cos(sin(sin(i))) * cos(sin(sin(i)));
+sum += sin(sin(sin(i)))*sin(sin(sin(i))) + cos(sin(sin(i)))*cos(sin(sin(i)));
   sum -= 100000;
   return -1.0 * x + sin(3.0 * x) - 1.0 + sum;
 }
@@ -75,7 +75,7 @@ struct limit {
   double b;
   double x;
   double z;
-  limit(double a0 = 0, double b0 = 0, double x_ = 0, double z_ = 0) {
+  explicit limit(double a0 = 0, double b0 = 0, double x_ = 0, double z_ = 0) {
     a = a0;
     b = b0;
     x = x_;
@@ -114,23 +114,24 @@ double converter_in_number_double(const std::string &s) {
   for (i = 0; ((i < len) && (s[i] != '.')); i++)
     a = a * 10.0 + (s[i] - '0');
   int j = i;
-  if (s[j] == '.')
+  if (s[j] == '.') {
     for (i = j + 1; i < len; i++)
       a = a + (s[i] - '0') / (rank_number(10.0, (i - j)));
+  }
   return a;
 }
 
 struct point {
   double x;
   double z;
-  point(double x_ = 0, double z_ = 0): x(x_), z(z_) {}
+  explicit point(double x_ = 0, double z_ = 0): x(x_), z(z_) {}
 };
 
 struct interval {
   double R;
   point* lp;
   point* rp;
-  interval(double R_ = 0.0, point* lp_ = NULL, point* rp_ = NULL) {
+  explicit interval(double R_ = 0.0, point* lp_ = NULL, point* rp_ = NULL) {
     R = R_;
     lp = lp_;
     rp = rp_;
@@ -184,7 +185,6 @@ void linAGP(int j, int n, double ee) {
   do {
     double mold = m;
     mm = 0.0;
-
     itr = itl = p.begin();
     itr++;
     while (itr != p.end()) {
@@ -198,12 +198,9 @@ void linAGP(int j, int n, double ee) {
       m = 2.0 * mm;
     else
       m = 1.0;
-
     if (mold != m) {
       while (!q.empty())
         q.pop();
-				
-
       itr = itl = p.begin();
       itr++;
       while (itr != p.end()) {
@@ -212,18 +209,13 @@ void linAGP(int j, int n, double ee) {
         itr++;
       }
     }
-
     zk = q.top();
     q.pop();
-
-    double xk = 0.5 * (zk.rp->x + zk.lp->x) - ((zk.rp->z - zk.lp->z) / (2.0 * m));
-
+    double xk = 0.5*(zk.rp->x + zk.lp->x) - ((zk.rp->z - zk.lp->z)/(2.0 * m));
     point t(xk, f[j](xk));
     point* tt = insertup_list(p, t);
-
     q.push(interval(Rfunc(*zk.lp, *tt, m), zk.lp, tt));
     q.push(interval(Rfunc(*tt, *zk.rp, m), tt, zk.rp));
-
     k++;
   } while ((zk.rp->x - zk.lp->x > ee) && (k < n));
 
@@ -298,7 +290,7 @@ int main(int argc, char *argv[]) {
       if (mold != m) {
         while (!q.empty())
           q.pop();
-				
+		
 
         itr = itl = p.begin();
         itr++;
@@ -363,7 +355,7 @@ int main(int argc, char *argv[]) {
       tp[1] = f[j](tp[0]);
       MPI_Send(&tp, 2, MPI_DOUBLE, 0, 1, MPI_COMM_WORLD);
       MPI_Recv(&end, 1, MPI_INT, 0, 5, MPI_COMM_WORLD, &status);
-   } while (end != 0);
+    } while (end != 0);
   }
 
   MPI_Finalize();
