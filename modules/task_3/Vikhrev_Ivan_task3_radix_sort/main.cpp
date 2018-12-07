@@ -35,14 +35,12 @@ uint32_t* merge(uint32_t *arr1, uint32_t num1, uint32_t *arr2, uint32_t num2) {
     return res;
 }
 
-/* sort unsigned ints */
 void rad_sort_u(uint32_t *from, uint32_t *to, unsigned bit) {
     if (!bit || to < from + 1) return;
 
     unsigned *ll = from, *rr = to - 1;
 
     for (;;) {
-        /* find left most with bit, and right most without bit, swap */
         while (ll < rr && !(*ll & bit)) ll++;
         while (ll < rr && (*rr & bit)) rr--;
         if (ll >= rr) break;
