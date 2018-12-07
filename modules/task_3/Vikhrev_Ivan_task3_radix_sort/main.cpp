@@ -4,6 +4,7 @@
 #include <iostream>
 #include <ctime>
 #include <utility>
+#include <limits>
 
 #define MainProc 0
 
@@ -107,6 +108,7 @@ int main(int argc, char** argv) {
               *resultP = NULL;
     double t1 = 0, t2 = 0;
     int type_sort = 0;
+    int imin = std::numeric_limits<int>::min();
     status = MPI_Init(&argc, &argv);
     if (status != MPI_SUCCESS) {
      return -1;
@@ -144,7 +146,7 @@ int main(int argc, char** argv) {
         }
         t1 = MPI_Wtime();
         if (type_sort == 0)
-            rad_sort_1(resultS, resultS + arrSize, INT_MIN);
+            rad_sort_1(resultS, resultS + arrSize, imin);
         else
             rad_sort_2(resultS, arrSize);
         t2 = MPI_Wtime();
@@ -180,7 +182,7 @@ int main(int argc, char** argv) {
         scounts[rank], MPI_UNSIGNED, MainProc, MPI_COMM_WORLD);
 
     if (type_sort == 0)
-        rad_sort_1(buff, buff + scounts[rank], INT_MIN);
+        rad_sort_1(buff, buff + scounts[rank], imin);
     else
         rad_sort_2(buff, scounts[rank]);
 
@@ -190,9 +192,9 @@ int main(int argc, char** argv) {
 
 
     if (rank == 0) {
-        for (uint32_t i = 0; i < scounts[0]; i++)
+        for (uint32_t i = 0; i < static_cast<uint32_t>(scounts[0]); i++)
             resultP[i] = buff[i];
-        for (uint32_t i = 1; i < size; i++) {
+        for (uint32_t i = 1; i < static_cast<uint32_t>(size); i++) {
             MPI_Recv(buff2, arrSize / size, MPI_UNSIGNED, MPI_ANY_SOURCE,
                 i, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
             resultP = merge(buff2, arrSize / size, resultP,
