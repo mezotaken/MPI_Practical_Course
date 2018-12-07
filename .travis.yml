@@ -76,4 +76,4 @@ script:
   - mpirun -np 4 ./modules/task_3/ndanilov_qsort/ndanilov_qsort 10
   - mpirun -np 4 ./modules/task_3/Gaidaichuk_Yuri_task3_Monte_Carlo/Gaidaichuk_Yuri_task3_Monte_Carlo 1000 0.0 1.0 0.0 1.0 0.5 1.0
   - mpirun -np 4 ./modules/task_3/Perov_Dima_task3_ShellMergeSort/Perov_Dima_task3_ShellMergeSort 10
-
+  - mpirun -np 4 ./modules/task_3/Vikhrev_Ivan_task3_radix_sort/Vikhrev_Ivan_task3_radix_sort 10
