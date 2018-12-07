@@ -1,8 +1,9 @@
 // Copyright ivanvikhrev
 #include <assert.h>
+#include <mpi.h>
 #include <iostream>
 #include <ctime>
-#include "mpi.h"
+#include <utility>
 
 #define MainProc 0
 
