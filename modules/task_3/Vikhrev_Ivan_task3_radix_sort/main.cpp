@@ -58,9 +58,9 @@ void rad_sort_1(unsigned int *from, unsigned int *to, unsigned int bit) {
 }
 
 void rad_sort_2(unsigned int * a, unsigned int count) {
-	unsigned int mIndex[4][256] = { 0 };  // count / index matrix
+    unsigned int mIndex[4][256] = { 0 };  // count / index matrix
     unsigned int *b = new unsigned int[count];  // allocate temp array
-	unsigned int i, j, m, n;
+    unsigned int i, j, m, n;
     unsigned int u;
     for (i = 0; i < count; i++) {
         u = a[i];
