@@ -14,7 +14,8 @@ void swp(unsigned int *a, unsigned int *b) {
     *b = tmp;
 }
 
-unsigned int* merge(unsigned int *arr1, unsigned int num1, unsigned int *arr2, unsigned int num2) {
+unsigned int* merge(unsigned int *arr1, unsigned int num1,
+    unsigned int *arr2, unsigned int num2) {
     unsigned int *res;
     unsigned int i = 0,
         j = 0,
@@ -64,7 +65,7 @@ void rad_sort_2(unsigned int * a, unsigned int count) {
     for (i = 0; i < count; i++) {
         u = a[i];
         for (j = 0; j < 4; j++) {
-            mIndex[j][static_cast<size_t>(u & 0xff)]++;
+            mIndex[j][static_cast<unsigned int>(u & 0xff)]++;
             u >>= 8;
         }
     }
@@ -79,13 +80,14 @@ void rad_sort_2(unsigned int * a, unsigned int count) {
     for (j = 0; j < 4; j++) {  // radix sort
         for (i = 0; i < count; i++) {  // sort by current lsb
             u = a[i];
-            m = static_cast<size_t>(u >> (j << 3)) & 0xff;
+            m = static_cast<unsigned int>(u >> (j << 3)) & 0xff;
             b[mIndex[j][m]++] = u;
         }
         std::swap(a, b);  // swap ptrs
     }
     delete[] b;
 }
+
 bool is_sorted(unsigned int* arr, unsigned int size) {
     bool flag = 1;
     for (unsigned int i = 0; i < size - 1; i++)
