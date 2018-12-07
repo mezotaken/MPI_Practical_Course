@@ -68,7 +68,7 @@ sum += sin(sin(sin(i)))*sin(sin(sin(i))) + cos(sin(sin(i)))*cos(sin(sin(i)));
   return -1.0 * x + sin(3.0 * x) - 1.0 + sum;
 }
 
-double (*f[7])(double) = { f1, f2, f3, f4, f5, f6, f7 };
+double (*f[7]) (double) = { f1, f2, f3, f4, f5, f6, f7 };
 
 struct limit {
   double a;
@@ -159,14 +159,14 @@ double Rfunc(const point &lp_, const point &rp_, double m) {
   return (m * dx + dz * dz / (m * dx) - 2.0 * (rp_.z + lp_.z));
 }
 
-point* insertup_list(std::list<point> &p, point &xk) {
+point* insertup_list(std::list<point> *p, point *xk) {
   std::list<point>::iterator itl, itr;
-  itl = itr = p.begin();
-  while ((itr != p.end()) && (itr->x < xk.x)) {
+  itl = itr = (*p).begin();
+  while ((itr != (*p).end()) && (itr->x < (*xk).x)) {
     itl = itr;
     itr++;
   }
-  p.insert(itr, xk);
+  (*p).insert(itr, (*xk));
   itl++;
   return &(*itl);
 }
@@ -213,7 +213,7 @@ void linAGP(int j, int n, double ee) {
     q.pop();
     double xk = 0.5*(zk.rp->x + zk.lp->x) - ((zk.rp->z - zk.lp->z)/(2.0 * m));
     point t(xk, f[j](xk));
-    point* tt = insertup_list(p, t);
+    point* tt = insertup_list(&p, &t);
     q.push(interval(Rfunc(*zk.lp, *tt, m), zk.lp, tt));
     q.push(interval(Rfunc(*tt, *zk.rp, m), tt, zk.rp));
     k++;
@@ -311,7 +311,7 @@ int main(int argc, char *argv[]) {
       for (int i = 0; i < ProcNum - 1; i++) {
         MPI_Recv(&tp, 2, MPI_DOUBLE, i + 1, 1, MPI_COMM_WORLD, &status);
         point t(tp[0], tp[1]);
-        tt = insertup_list(p, t);
+        tt = insertup_list(&p, &t);
         q.push(interval(Rfunc(*zk[i].lp, *tt, m), zk[i].lp, tt));
         q.push(interval(Rfunc(*tt, *zk[i].rp, m), tt, zk[i].rp));
         k++;
