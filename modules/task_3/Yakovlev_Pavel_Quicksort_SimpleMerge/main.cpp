@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
     masForLine = new double[sizemas];
     //  ------------ Initialization -----------------
     for (int i = 0; i < sizemas; i++)
-      mas[i] = masForLine[i] =static_cast<double>(rand()%10000);
+      mas[i] = masForLine[i] = std::rand()%10000;
     //  ------------ Print mas ------------------------
     if (sizemas < 21) {
       std::cout << "array: ";
@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
 
   //  union result -------------------------------
   MPI_Gather(submas, submit_num, MPI_DOUBLE,
-    recievemas, submit_num,MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    recievemas, submit_num, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
   if (rank == 0) {
     for (int i = 0; i < submit_num; i++)
@@ -168,7 +168,8 @@ int check_of_sort(double *mas, int size) {
 }
 
 void mergesort(double *masresult, double *mas1, double *mas2,
-               int firstElemMas1, int sizemas1, int firstElemMas2, int sizemas2) {
+               int firstElemMas1, int sizemas1,
+               int firstElemMas2, int sizemas2) {
   int i = firstElemMas1, j = firstElemMas2, k = 0;;
   double tmp1 = 0, tmp2 = 0;
   while (i < firstElemMas1 + sizemas1 && j < firstElemMas2 + sizemas2) {
