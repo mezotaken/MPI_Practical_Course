@@ -78,3 +78,4 @@ script:
   - mpirun -np 4 ./modules/task_3/Perov_Dima_task3_ShellMergeSort/Perov_Dima_task3_ShellMergeSort 10
   - mpirun -np 4 ./modules/task_3/Vdovin_Eugene_task3_AGP/Vdovin_Eugene_task3_AGP 1 1000 0.00001
   - mpirun -np 4 ./modules/task_3/Vikhrev_Ivan_task3_radix_sort/Vikhrev_Ivan_task3_radix_sort 10
+  - mpirun -np 4 ./modules/task_3/Yakovlev_Pavel_Quicksort_SimpleMerge/Yakovlev_Pavel_Quicksort_SimpleMerge 20
