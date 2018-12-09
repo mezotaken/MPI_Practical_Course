@@ -8,7 +8,8 @@
 
 void quicksort(double *mas, int begin, int end);
 int check_of_sort(double *mas, int size);
-void mergesort(double *masresult, double *mas1, double *mas2, int firstElemMas1, int sizemas1, int firstElemMas2, int sizemas2);
+void mergesort(double *masresult, double *mas1, double *mas2,
+           int firstElemMas1, int sizemas1, int firstElemMas2, int sizemas2);
 
 int main(int argc, char* argv[]) {
   std::srand(static_cast<int>(time(NULL)));
@@ -51,7 +52,7 @@ int main(int argc, char* argv[]) {
     masForLine = new double[sizemas];
     //  ------------ Initialization -----------------
     for (int i = 0; i < sizemas; i++)
-      mas[i] = masForLine[i] = rand()%10000;
+      mas[i] = masForLine[i] =static_cast<double>(rand()%10000);
     //  ------------ Print mas ------------------------
     if (sizemas < 21) {
       std::cout << "array: ";
@@ -62,12 +63,13 @@ int main(int argc, char* argv[]) {
     //  -------------- Line ---------------------------
     Time_begin = MPI_Wtime();
 
-    quicksort(masForLine,0,sizemas-1);
+    quicksort(masForLine, 0, sizemas-1);
 
     Time_end = MPI_Wtime();
     //  ------------ Print Line result ------------------------
     std::cout << "Line_Time = " << Time_end - Time_begin << std::endl;
-    std::cout << "sorting check Line = " << check_of_sort(masForLine,sizemas) << std::endl;
+    std::cout << "sorting check Line = " <<
+      check_of_sort(masForLine, sizemas) << std::endl;
     if (sizemas < 21) {
       std::cout << "Line_Result: ";
       for (int i = 0; i < sizemas; i++)
@@ -90,11 +92,10 @@ int main(int argc, char* argv[]) {
   quicksort(submas, 0, submit_num - 1);
 
   //  union result -------------------------------
-  MPI_Gather(submas,submit_num, MPI_DOUBLE,
+  MPI_Gather(submas, submit_num, MPI_DOUBLE,
     recievemas, submit_num,MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-  if (rank == 0)
-  {
+  if (rank == 0) {
     for (int i = 0; i < submit_num; i++)
       accessorymas[i] = accessorymas[sizemas + i] = recievemas[i];
 
@@ -115,7 +116,7 @@ int main(int argc, char* argv[]) {
     std::cout << std::endl << "Parallel time: ";
     std::cout << Time_end - Time_begin << std::endl;
     std::cout << "sorting check Parallel = " <<
-          check_of_sort(mas,sizemas) << std::endl;
+          check_of_sort(mas, sizemas) << std::endl;
     if (sizemas < 21) {
       std::cout << "Parallel_Result:  ";
       for (int i = 0; i < sizemas; i++)
@@ -140,8 +141,8 @@ void quicksort(double *mas, int begin, int end) {
   int a = begin, b = end;
   middle = mas[begin + (end - begin) / 2];
   while (a <= b) {
-    while (mas[a]<middle) a++;
-    while (mas[b]>middle) b--;
+    while (mas[a] < middle) a++;
+    while (mas[b] > middle) b--;
     if (a <= b) {
       if (mas[a] > mas[b]) {
         tmp = mas[a];
@@ -166,7 +167,8 @@ int check_of_sort(double *mas, int size) {
     return 0;
 }
 
-void mergesort(double *masresult, double *mas1, double *mas2, int firstElemMas1, int sizemas1, int firstElemMas2, int sizemas2) {
+void mergesort(double *masresult, double *mas1, double *mas2,
+               int firstElemMas1, int sizemas1, int firstElemMas2, int sizemas2) {
   int i = firstElemMas1, j = firstElemMas2, k = 0;;
   double tmp1 = 0, tmp2 = 0;
   while (i < firstElemMas1 + sizemas1 && j < firstElemMas2 + sizemas2) {
@@ -175,8 +177,7 @@ void mergesort(double *masresult, double *mas1, double *mas2, int firstElemMas1,
     if (tmp1 <= tmp2) {
       masresult[k] = tmp1;
       i++;
-    }
-    else {
+    } else {
       masresult[k] = tmp2;
       j++;
     }
