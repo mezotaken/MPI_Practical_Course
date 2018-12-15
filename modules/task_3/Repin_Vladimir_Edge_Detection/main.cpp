@@ -1,10 +1,9 @@
 // Copyright mezotaken
-#include <string>
 #include <assert.h>
 #include <mpi.h>
 #include <iostream>
+#include <string>
 #include "opencv2/opencv.hpp"
-
 
 const char* argKeys =
 "{ i image       | <none> |  Image name                }"
