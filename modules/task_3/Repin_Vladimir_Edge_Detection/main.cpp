@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
       shift += recvcounts[i];
     }
 
-	// Blur it to avoid noise
+    // Blur it to avoid noise
     GaussianBlur(original, original, cv::Size(3, 3), 0);
     cvtColor(original, original, CV_BGR2GRAY);  // Convert to gray
     cv::Mat grad_x, grad_y;
@@ -117,11 +117,9 @@ int main(int argc, char** argv) {
   MPI_Bcast(senddispls, nProc, MPI_INT, 0, MPI_COMM_WORLD);
   MPI_Bcast(sendcounts, nProc, MPI_INT, 0, MPI_COMM_WORLD);
   cv::Mat tmp(sendcounts[procId] / nCol, nCol, CV_8U);
-
   MPI_Scatterv(original.data, sendcounts, senddispls,
   MPI_UNSIGNED_CHAR, tmp.data, sendcounts[procId],
   MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
-  
   
   // Calcualting gradients in both directions
   // then approximating sqrt(dx^2+dy^2) as |dx|+|dy|
@@ -148,7 +146,7 @@ int main(int argc, char** argv) {
       if (seqres.data[i] != parres.data[i])
         unequal++;
     std::cout << "Parallel result " << t << std::endl;
-    std::cout << "Number of wrong pixels: " << unequal<<std::endl;
+    std::cout << "Number of wrong pixels: " << unequal << std::endl;
     std::cout << "-----------------------------" << std::endl;
   }
 
