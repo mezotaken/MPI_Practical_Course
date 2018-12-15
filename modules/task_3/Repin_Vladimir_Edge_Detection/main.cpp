@@ -119,7 +119,6 @@ int main(int argc, char** argv) {
   MPI_Scatterv(original.data, sendcounts, senddispls,
   MPI_UNSIGNED_CHAR, tmp.data, sendcounts[procId],
   MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
-  
   // Calcualting gradients in both directions
   // then approximating sqrt(dx^2+dy^2) as |dx|+|dy|
   Sobel(tmp, grad_x, CV_16S, 1, 0, ksize);
